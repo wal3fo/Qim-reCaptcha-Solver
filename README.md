@@ -1,29 +1,31 @@
-# Google reCaptcha Solver (Speech-to-Text Edition)
+# Universal Captcha Solver (reCaptcha & Turnstile)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
 [![Playwright](https://img.shields.io/badge/Playwright-v1.40+-orange)](https://playwright.dev/)
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-googlechrome.svg)](https://www.google.com/chrome/)
 
-A comprehensive solution for automating Google reCaptcha v2 challenges using **Speech-to-Text (STT)** technology. This repository provides two powerful tools:
+A comprehensive solution for automating **Google reCaptcha v2** and **Cloudflare Turnstile** challenges. This repository provides two powerful tools:
 
 1.  **Chrome Extension**: A browser extension that automatically solves captchas on any webpage you visit.
 2.  **Node.js Solver**: A standalone script using Playwright for server-side automation and scraping tasks.
 
-Both tools leverage [Wit.ai](https://wit.ai/) (free) to transcribe audio challenges, eliminating the need for expensive third-party solving services.
-
 ## 🚀 Features
 
 ### Core Features
--   **Cost-Free Solving**: Utilizes Wit.ai's free API for high-accuracy audio transcription.
--   **Smart Logic**: Automatically handles the entire flow: clicking the checkbox, selecting the audio challenge, transcribing, and verifying.
--   **Stealthy**: Implements human-like behavior (random delays, realistic typing simulation) to avoid detection.
+-   **Multi-Captcha Support**: Solves both Google reCaptcha v2 (Audio) and Cloudflare Turnstile (Interaction).
+-   **Cost-Free Solving**: 
+    -   **reCaptcha**: Utilizes Wit.ai's free API for audio transcription.
+    -   **Turnstile**: Uses smart interaction logic (no API key required).
+-   **Smart Logic**: Automatically handles the entire flow: clicking checkboxes, selecting challenges, transcribing audio, and verifying tokens.
+-   **Stealthy**: Implements human-like behavior (random delays, realistic typing simulation, jittery mouse movement) to avoid detection.
 -   **Error Recovery**: Automatically reloads challenges if blocked or if transcription fails.
 
 ### Chrome Extension Specifics
--   **Plug-and-Play**: Works on any website containing a reCaptcha v2 frame.
--   **User-Friendly UI**: Simple popup interface to manage your API token.
+-   **Plug-and-Play**: Works on any website containing supported captcha frames.
+-   **User-Friendly UI**: Simple popup interface to manage your Wit.ai token and view solver status.
 -   **Background Processing**: Handles audio downloads and API calls efficiently in a service worker.
+-   **Turnstile Auto-Click**: Automatically detects and solves Cloudflare Turnstile widgets.
 
 ### Node.js Solver Specifics
 -   **Headless Support**: Runs in headless Chromium via Playwright.
@@ -32,10 +34,15 @@ Both tools leverage [Wit.ai](https://wit.ai/) (free) to transcribe audio challen
 
 ## 📋 Prerequisites
 
--   **Wit.ai Token**: A free Server Access Token from [Wit.ai](https://wit.ai/).
+-   **Wit.ai Token**: A free Server Access Token from [Wit.ai](https://wit.ai/) (Required only for reCaptcha).
     1.  Create a new app on Wit.ai.
     2.  Go to **Management > Settings**.
     3.  Copy the **Server Access Token**.
+
+*(Note: Cloudflare Turnstile solving works out-of-the-box without any API keys)*
+
+### Server-Side Verification
+If you are integrating Turnstile into your own website, check out `verification-example.js` for a secure Node.js implementation of token validation.
 
 ## 🧩 Option 1: Chrome Extension
 
@@ -48,9 +55,9 @@ Both tools leverage [Wit.ai](https://wit.ai/) (free) to transcribe audio challen
 
 ### Usage
 1.  Click the extension icon in the Chrome toolbar.
-2.  Enter your **Wit.ai Server Access Token**.
+2.  Enter your **Wit.ai Server Access Token** (for reCaptcha).
 3.  Click **Save Settings**.
-4.  Navigate to any page with a Google reCaptcha v2. The extension will automatically detect and attempt to solve it.
+4.  Navigate to any page with a Google reCaptcha or Cloudflare Turnstile. The extension will automatically detect and attempt to solve it.
 
 ---
 
@@ -90,8 +97,8 @@ node solver.js
 
 The script will:
 1.  Launch a stealthy Chromium instance.
-2.  Navigate to the target page (default: Google reCaptcha Demo).
-3.  Detect and solve the captcha using audio transcription.
+2.  Navigate to the target page (Turnstile Demo or reCaptcha Demo).
+3.  Detect and solve the captcha (Turnstile via interaction, reCaptcha via audio).
 4.  Submit the form upon success.
 
 ## 🏗️ Architecture
@@ -105,6 +112,7 @@ The script will:
     -   `SpeechRecognizer.js`: Node.js implementation of Wit.ai client.
     -   `Stealth.js`: Anti-detection scripts.
 -   **`solver.js`**: Entry point for the Node.js automation.
+-   **`verification-example.js`**: Example of how to verify Turnstile tokens on your backend server.
 
 ## 🤝 Contributing
 

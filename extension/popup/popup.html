@@ -1,25 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Solver Settings</title>
   <link rel="stylesheet" href="popup.css">
 </head>
+
 <body>
   <div class="container">
     <header>
       <h2>Solver Settings</h2>
     </header>
-    
+
     <main>
       <div class="form-group">
         <label for="witToken">Wit.ai Server Access Token</label>
         <input type="text" id="witToken" placeholder="Enter your token here" autocomplete="off">
+        <small style="color: #aaa; display: block; margin-top: 5px;">Required for reCaptcha Audio Solving</small>
       </div>
-      
+
+      <div class="form-group">
+        <label>Turnstile Solver</label>
+        <div style="background: #2a2a2a; padding: 10px; border-radius: 4px; color: #CDDC39; font-size: 0.9em;">
+          Auto-Clicker Active
+        </div>
+      </div>
+
       <div id="status" class="status" role="status" aria-live="polite">Settings saved!</div>
-      
+
       <button id="saveBtn" type="button">Save Settings</button>
     </main>
 
@@ -29,4 +39,5 @@
   </div>
   <script src="popup.js"></script>
 </body>
+
 </html>

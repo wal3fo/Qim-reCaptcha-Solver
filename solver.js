@@ -32,6 +32,8 @@ const initGrabber = async () => {
             args: [
                 '--no-sandbox',
                 '--disable-blink-features=AutomationControlled', // Basic stealth
+                `--disable-extensions-except=${process.cwd()}\\extension`,
+                `--load-extension=${process.cwd()}\\extension`
             ]
         });
 
@@ -54,13 +56,24 @@ const initGrabber = async () => {
         const context = await browser.newContext(contextOptions);
         const page = await context.newPage();
 
+        // Listen to browser console logs
+        page.on('console', msg => {
+            const text = msg.text();
+            if (text.includes('[Turnstile]') || text.includes('Turnstile')) {
+                console.log('BROWSER:', text);
+            }
+        });
+
         // Apply advanced stealth scripts
         await applyStealth(page);
 
+        // Initialize Solvers
+        const reCaptchaSolver = new CaptchaSolver(page);
+
         try {
             logger.debug('Navigating to target...');
-            // Using the demo URL as per user's latest edit
-            await page.goto(`https://www.google.com/recaptcha/api2/demo`, {
+            // Using Turnstile demo URL (Nopecha is more reliable than peet.ws)
+            await page.goto(`https://nopecha.com/demo/turnstile`, {
                 waitUntil: 'networkidle',
                 timeout: config.timeouts.navigation
             });
@@ -68,27 +81,79 @@ const initGrabber = async () => {
             logger.warn('Navigation error:', error.message);
         }
 
-        // Initialize and run the new Speech-to-Text Captcha Solver
-        const solver = new CaptchaSolver(page);
-        const isSolved = await solver.solve();
+        let isSolved = false;
+
+        // Check for Cloudflare Turnstile
+        logger.info('Checking for Cloudflare Turnstile...');
+        // Let the extension handle it, just wait and observe
+        try {
+            logger.info('Waiting for solution...');
+            await page.waitForFunction(() => {
+                const input = document.querySelector('[name="cf-turnstile-response"]');
+                // Also check for success text as alternate confirmation
+                const successText = document.querySelector('#success-text, .success-message');
+                return (input && input.value.length > 0) || (successText && successText.offsetParent !== null);
+            }, { timeout: 25000 });
+
+            logger.info('Turnstile solved by extension!');
+            isSolved = true;
+        } catch (e) {
+            logger.warn('Turnstile not solved within timeout (or handled manually via logs).');
+        }
+
+        /* Manual solver disabled to test extension
+        try {
+            // Find iframe with Turnstile
+            const turnstileFrame = page.frames().find(f => f.url().includes('challenges.cloudflare.com'));
+        
+            if (turnstileFrame) {
+                logger.info('Turnstile iframe detected. Attempting to click...');
+        
+                // Usually just clicking the checkbox is enough
+                const selectors = ['input[type="checkbox"]', '.ctp-checkbox-label', '#challenge-stage label'];
+                const checkbox = await turnstileFrame.waitForSelector(selectors.join(','), { timeout: 5000 }).catch(() => null);
+        
+                if (checkbox) {
+                    await delay(1000 + Math.random() * 500);
+                    await checkbox.click();
+                    logger.info('Clicked Turnstile checkbox.');
+        
+                    // Wait for success
+                    await page.waitForFunction(() => {
+                        // Check if the widget has success state or token input is filled
+                        const input = document.querySelector('[name="cf-turnstile-response"]');
+                        return input && input.value.length > 0;
+                    }, { timeout: 10000 }).catch(() => null);
+        
+                    isSolved = true;
+                    logger.info('Turnstile solved (token generated).');
+                } else {
+                    logger.warn('Turnstile detected but checkbox not found.');
+                }
+            } else {
+                // Try finding via main page selector if iframe is cross-origin restricted
+                const turnstileContainer = await page.$('.cf-turnstile');
+                if (turnstileContainer) {
+                    logger.info('Turnstile container found. Waiting for widget...');
+                    await delay(2000);
+                    // Often needs to click inside the iframe
+                }
+            }
+        } catch (err) {
+            logger.error('Error solving Turnstile:', err);
+        }
+        */
+
+        if (!isSolved) {
+            // Fallback to reCaptcha
+            logger.info('Turnstile not solved or not present. Checking for reCaptcha...');
+            isSolved = await reCaptchaSolver.solve();
+        }
 
         if (isSolved) {
             try {
-                // Check if there is a post button (Demo page has 'recaptcha-demo-submit')
-                const submitBtn = page.locator('#recaptcha-demo-submit');
-                if (await submitBtn.count() > 0) {
-                    await submitBtn.click();
-                    await delay(2000);
-                    logger.info('Demo form submitted!');
-                } else {
-                    // Fallback for the original site button
-                    const postBut = page.locator('#postbut');
-                    if (await postBut.count() > 0) {
-                        await postBut.click();
-                        await delay(5048);
-                        logger.info('Vote validé !');
-                    }
-                }
+                // Generic success check
+                logger.info('Captcha solved successfully!');
             } catch (e) {
                 logger.error('Failed to submit form', e);
             }

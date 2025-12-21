@@ -29,7 +29,7 @@ async function transcribeAudio(audioUrl, token) {
         // Parse Wit.ai response
         // Similar logic to SpeechRecognizer.js but simplified for browser
         let text = null;
-        
+
         try {
             // Try standard JSON
             const json = JSON.parse(data);
@@ -48,7 +48,7 @@ async function transcribeAudio(audioUrl, token) {
                 }
             }
         }
-        
+
         // Regex fallback
         const match = data.match(/"text":\s*"(.*)"/);
         if (match) return match[1];
@@ -64,11 +64,12 @@ async function transcribeAudio(audioUrl, token) {
 // Listen for messages from content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'transcribe') {
+        // ... (existing code)
         // Must return true to indicate async response
         (async () => {
             try {
                 const { audioUrl } = request;
-                
+
                 // Get token from storage
                 const data = await chrome.storage.sync.get(['witAiToken']);
                 const token = data.witAiToken;
@@ -80,7 +81,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 }
 
                 const text = await transcribeAudio(audioUrl, token);
-                
+
                 if (text) {
                     sendResponse({ success: true, text });
                 } else {
