@@ -3,25 +3,60 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
 [![Playwright](https://img.shields.io/badge/Playwright-v1.40+-orange)](https://playwright.dev/)
+[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-googlechrome.svg)](https://www.google.com/chrome/)
 
-An automated, cost-effective solver for Google reCaptcha v2. This project leverages **Speech-to-Text (STT)** technology using [Wit.ai](https://wit.ai/) to solve audio challenges, eliminating the need for paid third-party solving services. It is built on **Playwright** for robust, stealthy browser automation.
+A comprehensive solution for automating Google reCaptcha v2 challenges using **Speech-to-Text (STT)** technology. This repository provides two powerful tools:
+
+1.  **Chrome Extension**: A browser extension that automatically solves captchas on any webpage you visit.
+2.  **Node.js Solver**: A standalone script using Playwright for server-side automation and scraping tasks.
+
+Both tools leverage [Wit.ai](https://wit.ai/) (free) to transcribe audio challenges, eliminating the need for expensive third-party solving services.
 
 ## 🚀 Features
 
-- **Cost-Free Solving**: Uses Wit.ai's free API for audio transcription.
-- **Robust Automation**: Built with Playwright for reliable execution and auto-waiting.
-- **Stealth Mode**: Includes custom stealth scripts to evade bot detection.
-- **Proxy Support**: Configurable HTTP proxy with authentication.
-- **Modular Design**: Clean separation of solver logic, speech recognition, and configuration.
+### Core Features
+-   **Cost-Free Solving**: Utilizes Wit.ai's free API for high-accuracy audio transcription.
+-   **Smart Logic**: Automatically handles the entire flow: clicking the checkbox, selecting the audio challenge, transcribing, and verifying.
+-   **Stealthy**: Implements human-like behavior (random delays, realistic typing simulation) to avoid detection.
+-   **Error Recovery**: Automatically reloads challenges if blocked or if transcription fails.
+
+### Chrome Extension Specifics
+-   **Plug-and-Play**: Works on any website containing a reCaptcha v2 frame.
+-   **User-Friendly UI**: Simple popup interface to manage your API token.
+-   **Background Processing**: Handles audio downloads and API calls efficiently in a service worker.
+
+### Node.js Solver Specifics
+-   **Headless Support**: Runs in headless Chromium via Playwright.
+-   **Stealth Plugins**: Includes custom scripts to mask automation fingerprints (WebDriver, permissions, etc.).
+-   **Proxy Support**: Configurable HTTP/HTTPS proxy support for large-scale operations.
 
 ## 📋 Prerequisites
 
-- **Node.js**: v14 or higher
-- **Wit.ai Token**: A free Server Access Token from [Wit.ai](https://wit.ai/).
-- **Proxy (Optional)**: Recommended for heavy usage to avoid IP bans.
+-   **Wit.ai Token**: A free Server Access Token from [Wit.ai](https://wit.ai/).
+    1.  Create a new app on Wit.ai.
+    2.  Go to **Management > Settings**.
+    3.  Copy the **Server Access Token**.
 
-## 🛠️ Installation
+## 🧩 Option 1: Chrome Extension
 
+### Installation
+1.  Clone or download this repository.
+2.  Open Chrome and navigate to `chrome://extensions/`.
+3.  Enable **Developer mode** (toggle in the top right).
+4.  Click **Load unpacked**.
+5.  Select the `extension` directory from this project.
+
+### Usage
+1.  Click the extension icon in the Chrome toolbar.
+2.  Enter your **Wit.ai Server Access Token**.
+3.  Click **Save Settings**.
+4.  Navigate to any page with a Google reCaptcha v2. The extension will automatically detect and attempt to solve it.
+
+---
+
+## 💻 Option 2: Node.js Standalone Solver
+
+### Installation
 1.  **Clone the repository**:
     ```bash
     git clone https://github.com/username/google-recaptcha-solver.git
@@ -46,8 +81,7 @@ An automated, cost-effective solver for Google reCaptcha v2. This project levera
     PROXY=http://user:pass@host:port  # Optional
     ```
 
-## 🏃 Usage
-
+### Usage
 Run the main solver script:
 
 ```bash
@@ -62,10 +96,15 @@ The script will:
 
 ## 🏗️ Architecture
 
-- **`src/CaptchaSolver.js`**: Core logic utilizing Playwright Locators to interact with reCaptcha frames.
-- **`src/SpeechRecognizer.js`**: Handles audio download and communication with Wit.ai API.
-- **`src/Stealth.js`**: Injects JavaScript overrides to mask automation fingerprints.
-- **`solver.js`**: Entry point orchestrating the browser session and solver instantiation.
+-   **`extension/`**: Contains the Chrome Extension source code (Manifest V3).
+    -   `background.js`: Service worker for API communication.
+    -   `content.js`: Page script for DOM interaction and typing simulation.
+    -   `popup/`: Settings UI.
+-   **`src/`**: Core logic for the Node.js solver.
+    -   `CaptchaSolver.js`: Playwright-based solver class.
+    -   `SpeechRecognizer.js`: Node.js implementation of Wit.ai client.
+    -   `Stealth.js`: Anti-detection scripts.
+-   **`solver.js`**: Entry point for the Node.js automation.
 
 ## 🤝 Contributing
 
