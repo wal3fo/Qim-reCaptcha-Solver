@@ -1,7 +1,8 @@
 # Google reCaptcha Solver (Speech-to-Text Edition)
 
-[![Node.js CI](https://github.com/username/repo/actions/workflows/test.yml/badge.svg)](https://github.com/username/repo/actions/workflows/test.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
+[![Playwright](https://img.shields.io/badge/Playwright-v1.40+-orange)](https://playwright.dev/)
 
 An automated, cost-effective solver for Google reCaptcha v2. This project leverages **Speech-to-Text (STT)** technology using [Wit.ai](https://wit.ai/) to solve audio challenges, eliminating the need for paid third-party solving services. It is built on **Playwright** for robust, stealthy browser automation.
 
