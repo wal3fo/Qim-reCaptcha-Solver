@@ -1,25 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <style>
-    body { width: 300px; padding: 15px; font-family: sans-serif; }
-    h2 { margin-top: 0; font-size: 16px; color: #333; }
-    .form-group { margin-bottom: 10px; }
-    label { display: block; margin-bottom: 5px; font-size: 12px; }
-    input[type="text"] { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-    button { width: 100%; padding: 8px; background-color: #4285f4; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    button:hover { background-color: #357ae8; }
-    .status { margin-top: 10px; font-size: 12px; color: green; display: none; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solver Settings</title>
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <h2>Solver Settings</h2>
-  <div class="form-group">
-    <label for="witToken">Wit.ai Server Access Token</label>
-    <input type="text" id="witToken" placeholder="Enter your token here">
+  <div class="container">
+    <header>
+      <h2>Solver Settings</h2>
+    </header>
+    
+    <main>
+      <div class="form-group">
+        <label for="witToken">Wit.ai Server Access Token</label>
+        <input type="text" id="witToken" placeholder="Enter your token here" autocomplete="off">
+      </div>
+      
+      <div id="status" class="status" role="status" aria-live="polite">Settings saved!</div>
+      
+      <button id="saveBtn" type="button">Save Settings</button>
+    </main>
+
+    <footer class="footer">
+      <p>Qim reCaptcha Solver</p>
+    </footer>
   </div>
-  <button id="saveBtn">Save Settings</button>
-  <div id="status" class="status">Settings saved!</div>
   <script src="popup.js"></script>
 </body>
 </html>
