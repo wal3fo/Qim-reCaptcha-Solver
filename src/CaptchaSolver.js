@@ -37,19 +37,19 @@ export class CaptchaSolver {
     }
 
     /**
-     * Orchestrates the solving process.
+     * Orchestrates the solving process for reCaptcha.
      * @returns {Promise<boolean>} True if solved successfully, false otherwise.
      */
     async solve() {
         try {
-            logger.info('Starting captcha solution...');
+            logger.info('Starting reCaptcha solution...');
 
             // 1. Find Anchor Frame
-            let anchorFrame = await this.findFrame('api2/anchor');
+            let anchorFrame = await this.findFrame(/api2\/anchor/);
             if (!anchorFrame) {
                 // Retry finding frames
                 await delay(1000);
-                anchorFrame = await this.findFrame('api2/anchor');
+                anchorFrame = await this.findFrame(/api2\/anchor/);
                 if (!anchorFrame) {
                     logger.warn('Recaptcha anchor frame not found');
                     return false;
@@ -58,17 +58,17 @@ export class CaptchaSolver {
 
             // 2. Click Checkbox
             // Use locator for auto-waiting
-            const checkbox = anchorFrame.locator('.recaptcha-checkbox-border');
+            const checkbox = anchorFrame.locator('.recaptcha-checkbox-border, #recaptcha-anchor');
             if (await checkbox.count() > 0) {
                 logger.debug('Clicking captcha checkbox...');
-                await checkbox.click({ delay: randomDelay(30, 100) });
+                await checkbox.first().click({ delay: randomDelay(30, 100) });
                 await delay(randomDelay(2000, 3000));
             } else {
                 logger.debug('Checkbox selector not found, checking if already open...');
             }
 
             // 3. Find Challenge Frame (bframe)
-            let bFrame = await this.findFrame('api2/bframe');
+            let bFrame = await this.findFrame(/api2\/bframe/);
             if (!bFrame) {
                 logger.info('No challenge frame found. Checking if solved...');
                 const isSolved = await this.isSolved(anchorFrame);
@@ -76,7 +76,7 @@ export class CaptchaSolver {
 
                 // Wait a bit more
                 await delay(2000);
-                bFrame = await this.findFrame('api2/bframe');
+                bFrame = await this.findFrame(/api2\/bframe/);
             }
 
             if (!bFrame) {
@@ -97,7 +97,7 @@ export class CaptchaSolver {
                 await delay(randomDelay(2000, 3000));
 
                 // Re-acquire frame after interaction (it might reload)
-                bFrame = await this.findFrame('api2/bframe');
+                bFrame = await this.findFrame(/api2\/bframe/);
             } else {
                 logger.warn('Audio button not found. May already be in audio mode or unsupported.');
             }
@@ -218,15 +218,17 @@ export class CaptchaSolver {
     }
 
     /**
-     * Finds a frame by partial URL match.
-     * @param {string} urlPart - Partial URL string.
+     * Finds a frame by partial URL match or Regex.
+     * @param {string|RegExp} urlPart - Partial URL string or Regex.
      * @returns {Promise<import('playwright').Frame|null>}
      */
     async findFrame(urlPart) {
-        // Iterate through all frames
         const frames = this.page.frames();
         for (const frame of frames) {
-            if (frame.url().includes(urlPart)) {
+            const url = frame.url();
+            if (urlPart instanceof RegExp) {
+                if (urlPart.test(url)) return frame;
+            } else if (url.includes(urlPart)) {
                 return frame;
             }
         }
