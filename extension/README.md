@@ -1,29 +1,46 @@
-# Google reCaptcha Solver (Chrome Extension)
+# Qim reCaptcha Solver (Chrome Extension)
 
-This directory contains the Chrome Extension version of the solver.
+A powerful, automated solver for Google reCaptcha v2 challenges. This extension operates locally within the browser, prioritizing privacy and speed.
+
+## Features
+
+### Google reCaptcha v2 Solver
+- **Method:** Audio Challenge Transcription (Speech-to-Text).
+- **Engine:** Uses Wit.ai API for accurate audio transcription.
+- **Workflow:**
+  1.  Detects reCaptcha widget.
+  2.  Clicks "I'm not a robot".
+  3.  Switches to Audio Challenge.
+  4.  Downloads audio, sends to Wit.ai, and types the transcribed text.
+  5.  Verifies the solution.
 
 ## Installation
 
-1.  Open Chrome and go to `chrome://extensions`.
-2.  Enable **Developer mode** (toggle in the top right).
-3.  Click **Load unpacked**.
-4.  Select the `extension` folder in this repository.
+1.  **Clone/Download** this repository.
+2.  Open Chrome and navigate to `chrome://extensions`.
+3.  Enable **Developer mode** (toggle in the top right).
+4.  Click **Load unpacked**.
+5.  Select the `extension` folder from this project.
 
 ## Configuration
 
-1.  Click the extension icon in the toolbar.
-2.  Enter your **Wit.ai Server Access Token**.
-3.  Click **Save Settings**.
+### Required for reCaptcha
+To solve Google reCaptcha, you need a free Wit.ai Server Access Token.
 
-## Usage
+1.  Go to [https://wit.ai/](https://wit.ai/) and log in with your Facebook/Meta account.
+2.  Create a new App (e.g., "CaptchaSolver").
+3.  Go to **Management > Settings**.
+4.  Copy the **Server Access Token**.
+5.  Click the **Qim Solver extension icon** in your browser toolbar.
+6.  Paste the token into the "Wit.ai Server Access Token" field and click **Save Settings**.
 
-Navigate to any page with a Google reCaptcha v2. The extension will automatically:
-1.  Click the "I'm not a robot" checkbox.
-2.  Switch to the Audio Challenge.
-3.  Transcribe the audio using Wit.ai.
-4.  Solve the captcha.
+## Troubleshooting
 
-## Notes
+- **reCaptcha Audio Challenge Disabled:** If Google detects too much automated traffic from your IP, they may temporarily disable the audio challenge. Try changing your IP (VPN/Proxy) or waiting a few hours.
+- **Extension Errors:** Check `chrome://extensions` > "Errors" for any logs.
+- **Console Logs:** Open the browser's Developer Tools (F12) > Console to see detailed logs.
 
-- Ensure you have a valid internet connection to reach Wit.ai.
-- If the IP is blocked by Google (too many requests), the solver might fail or the audio challenge might be disabled.
+## Privacy
+
+- Audio files are sent to Wit.ai (Meta) for transcription only.
+- No other browsing data is collected or sent to any third-party servers.
