@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "Google reCaptcha Solver (STT)",
-  "version": "1.0.0",
+  "version": "2.5.0",
   "description": "Automated Google reCaptcha v2 solver using Speech-to-Text (Wit.ai).",
   "permissions": [
     "storage",
     "activeTab",
     "scripting",
-    "contextMenus"
+    "contextMenus",
+    "notifications"
   ],
   "host_permissions": [
     "<all_urls>"
