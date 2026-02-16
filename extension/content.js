@@ -615,6 +615,7 @@ if (window.rcSolverInitialized) {
         Loader.hide();
     });
 
+
     // Detect context
     const isIframe = window.self !== window.top;
     const context = isIframe ? 'iframe' : 'main page';
