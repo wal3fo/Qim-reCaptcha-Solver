@@ -131,3 +131,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## ⚠️ Disclaimer
 
 This tool is for educational purposes only. Automated interaction with websites may violate their Terms of Service. Use responsibly.
+# Qim-reCaptcha-Solver
