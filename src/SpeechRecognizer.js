@@ -19,11 +19,14 @@ export class SpeechRecognizer {
             headers: {
                 Authorization: `Bearer ${this.token}`,
                 'Content-Type': 'audio/mpeg3',
-                'X-Requested-With': 'XMLHttpRequest'
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
             },
             httpsAgent: new https.Agent({ rejectUnauthorized: false }),
             timeout: 10000,
-            responseType: 'text'
+            responseType: 'text',
+            maxRedirects: 5
         });
 
         // In-memory cache: Map<hash, text>
@@ -41,10 +44,9 @@ export class SpeechRecognizer {
      */
     async transcribe(audioBuffer) {
         try {
-            // 1. Check Cache
+            // 1. Check Cache (silent)
             const hash = this.generateHash(audioBuffer);
             if (this.cache.has(hash)) {
-                console.log('[SpeechRecognizer] Cache hit');
                 return this.cache.get(hash);
             }
 
@@ -59,7 +61,7 @@ export class SpeechRecognizer {
                     if (rawText) break;
                 } catch (error) {
                     lastError = error;
-                    console.warn(`[SpeechRecognizer] Attempt ${attempt} failed:`, error.message);
+                    // Silent error handling (no console logs)
                     if (attempt < this.maxRetries) {
                         await new Promise(r => setTimeout(r, this.retryDelay * attempt));
                     }

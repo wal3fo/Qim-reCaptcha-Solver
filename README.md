@@ -1,11 +1,11 @@
-# Google reCaptcha Solver (Audio)
+# Google reCaptcha & Cloudflare Turnstile Solver (Audio)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
 [![Playwright](https://img.shields.io/badge/Playwright-v1.40+-orange)](https://playwright.dev/)
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-googlechrome.svg)](https://www.google.com/chrome/)
 
-A comprehensive solution for automating **Google reCaptcha v2** challenges. This repository provides two powerful tools:
+A comprehensive solution for automating **Google reCaptcha v2** and **Cloudflare Turnstile** challenges. This repository provides two powerful tools:
 
 1.  **Chrome Extension**: A browser extension that automatically solves captchas on any webpage you visit.
 2.  **Node.js Solver**: A standalone script using Playwright for server-side automation and scraping tasks.
@@ -13,10 +13,15 @@ A comprehensive solution for automating **Google reCaptcha v2** challenges. This
 ## 🚀 Features
 
 ### Core Features
--   **Google reCaptcha v2 Support**: Solves reCaptcha Audio challenges.
+-   **Google reCaptcha v2 Support**: Solves reCaptcha Audio challenges with optimized stealth processing.
+-   **Cloudflare Turnstile Support**: Automatically detects and solves Cloudflare Turnstile captchas.
 -   **Cost-Free Solving**: Utilizes Wit.ai's free API for audio transcription.
 -   **Smart Logic**: Automatically handles the entire flow: clicking checkboxes, switching to audio mode, transcribing, and verifying tokens.
--   **Stealthy**: Implements human-like behavior (random delays, realistic typing simulation, jittery mouse movement) to avoid detection.
+-   **Advanced Stealth**: Implements comprehensive anti-detection techniques including:
+    - Hidden audio processing (no console logs, silent API calls)
+    - Human-like typing patterns with variable speeds and pauses
+    - WebDriver masking and fingerprint protection
+    - Canvas and WebGL fingerprint randomization
 -   **Error Recovery**: Automatically reloads challenges if blocked or if transcription fails.
 
 ### Chrome Extension Specifics
@@ -49,7 +54,7 @@ A comprehensive solution for automating **Google reCaptcha v2** challenges. This
 1.  Click the extension icon in the Chrome toolbar.
 2.  Enter your **Wit.ai Server Access Token**.
 3.  Click **Save Settings**.
-4.  Navigate to any page with a Google reCaptcha. The extension will automatically detect and attempt to solve it.
+4.  Navigate to any page with a Google reCaptcha or Cloudflare Turnstile. The extension will automatically detect and attempt to solve it.
 
 ---
 
@@ -89,26 +94,30 @@ node solver.js
 
 The script will:
 1.  Launch a stealthy Chromium instance (Headful mode is required for extension support).
-2.  Navigate to the target page (Google reCaptcha Demo).
-3.  Attempt to solve using the loaded extension or internal logic.
+2.  Navigate to the target page (Google reCaptcha Demo or any page with captcha).
+3.  Automatically detect and solve reCaptcha or Turnstile using the loaded extension or internal logic.
 
 ### Playwright Implementation Details
 The core logic resides in `src/CaptchaSolver.js`. It provides a `CaptchaSolver` class that:
--   **Manages Frames**: Automatically finds and switches to reCaptcha iframes.
--   **Audio Solving**: Downloads and transcribes reCaptcha audio challenges using Wit.ai.
+-   **Auto-Detection**: Automatically detects whether the page contains reCaptcha or Turnstile.
+-   **Manages Frames**: Automatically finds and switches to captcha iframes.
+-   **Audio Solving**: Downloads and transcribes reCaptcha audio challenges using Wit.ai (silent mode).
+-   **Turnstile Solving**: Handles Cloudflare Turnstile challenges with multiple click strategies.
+-   **Human-like Typing**: Simulates natural typing patterns with variable speeds and pauses.
 -   **Smart Waits**: Uses Playwright's auto-waiting locators to handle dynamic content loading.
 -   **Error Handling**: Robust try-catch blocks to handle network failures, missing elements, or blocking.
 
 ## 🏗️ Architecture
 
 -   **`extension/`**: Contains the Chrome Extension source code (Manifest V3).
-    -   `background.js`: Service worker for API communication.
-    -   `content.js`: Page script for DOM interaction and typing simulation.
+    -   `background.js`: Service worker for API communication (silent audio processing).
+    -   `content.js`: Page script for DOM interaction, typing simulation, and Turnstile support.
     -   `popup/`: Settings UI.
 -   **`src/`**: Core logic for the Node.js solver.
-    -   `CaptchaSolver.js`: Playwright-based solver class.
-    -   `SpeechRecognizer.js`: Node.js implementation of Wit.ai client.
-    -   `Stealth.js`: Anti-detection scripts.
+    -   `CaptchaSolver.js`: Playwright-based solver class supporting both reCaptcha and Turnstile.
+    -   `TurnstileSolver.js`: Dedicated Cloudflare Turnstile solver with multiple click strategies.
+    -   `SpeechRecognizer.js`: Node.js implementation of Wit.ai client (optimized for stealth).
+    -   `Stealth.js`: Advanced anti-detection scripts including audio processing hiding.
 -   **`solver.js`**: Entry point for the Node.js automation.
 
 ## 🤝 Contributing

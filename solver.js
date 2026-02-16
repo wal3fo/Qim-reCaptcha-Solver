@@ -82,8 +82,8 @@ async function main() {
 
             let isSolved = false;
 
-            // Check for reCaptcha
-            logger.info('Checking for reCaptcha...');
+            // Check for reCaptcha or Turnstile
+            logger.info('Checking for captcha (reCaptcha or Turnstile)...');
             isSolved = await captchaSolver.solve();
 
             if (isSolved) {
